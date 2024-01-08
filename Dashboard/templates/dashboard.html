@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #3498db;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #528e19;
+            margin-bottom: 24px;
+        }
+
+        h4 {
+            text-align: center;
+            color: #463f92;
+            margin-bottom: 24px;
+        }
+
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .chart {
+            width: 45%;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Dashboard</h1>
+    <h2>Student 1: 11355 | Asad Tariq Sheikh</h2>
+    <h2>Student 2: 10718 | Muzammil Ahmed</h2>
+    <h4>Introduction to Big Data</h4>
+    <h4>Prediction Using Supervised ML - PySpark Linear Regression (Cryptocurrency Dataset - USD)</h4>
+    <h4>Data Science & Business Analytics</h4>
+
+    <div class="chart-container">
+        <div id="open-bar-chart" class="chart"></div>
+        <div id="high-bar-chart" class="chart"></div>
+        <div id="low-bar-chart" class="chart"></div>
+        <div id="close-bar-chart" class="chart"></div>
+        <div id="volume-bar-chart" class="chart"></div>
+        
+        <div id="open-pie-chart" class="chart"></div>
+        <div id="high-pie-chart" class="chart"></div>
+        <div id="low-pie-chart" class="chart"></div>
+        <div id="close-pie-chart" class="chart"></div>
+        <div id="volume-pie-chart" class="chart"></div>
+    </div>
+
+    <script>
+        var data = {{ data.to_dict(orient="records") | tojson | safe }};
+    
+        var open = data.map(function(row) { return row.Open; });
+        var high = data.map(function(row) { return row.High; });
+        var low = data.map(function(row) { return row.Low; });
+        var close = data.map(function(row) { return row.Close; });
+        var volume = data.map(function(row) { return row.Volume; });
+
+        function createPieChart(chartId, label, value) {
+            var chart = [{
+                labels: [label, 'Other'],
+                values: [value, 100 - value],
+                type: 'pie',
+                textinfo: 'label+percent',
+                insidetextorientation: 'radial'
+            }];
+
+            Plotly.newPlot(chartId, chart);
+        }
+
+        function createBarChart(chartId, labels, values, barName) {
+            var chart = {
+                x: labels,
+                y: values,
+                type: 'bar',
+                name: barName,
+            };
+
+            Plotly.newPlot(chartId, [chart]);
+        }
+
+        createBarChart('open-bar-chart', ['Open'], [open[0]], 'Open');
+        createBarChart('high-bar-chart', ['High'], [high[0]], 'High');
+        createBarChart('low-bar-chart', ['Low'], [low[0]], 'Low');
+        createBarChart('close-bar-chart', ['Close'], [close[0]], 'Close');
+        createBarChart('volume-bar-chart', ['Volume'], [volume[0]], 'Volume');
+
+        createPieChart('open-pie-chart', 'Open', open[0]);
+        createPieChart('high-pie-chart', 'High', high[0]);
+        createPieChart('low-pie-chart', 'Low', low[0]);
+        createPieChart('close-pie-chart', 'Close', close[0]);
+        createPieChart('volume-pie-chart', 'Volume', volume[0]);
+    </script>    
+</body>
+</html>
